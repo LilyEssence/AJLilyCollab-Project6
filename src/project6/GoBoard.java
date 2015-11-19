@@ -16,6 +16,38 @@ public class GoBoard {
     public GoBoard(int boardSize){
 	boardArray = new int[boardSize][boardSize];
     }
+    
+    public boolean hasFinished(){ 
+    	//TODO
+    	return false;
+    }
+
+	public String getTextBoard() {
+		// TODO Auto-generated method stub
+		int boardsize = 9;
+		char[][] tester = new char[boardsize][boardsize];
+		for (int i = 0; i<boardsize; i++){
+			for (int j = 0; j<boardsize; j++){
+				tester[i][j] = '+';
+			}
+		}
+		
+		for (int i = 0; i<boardsize; i++){
+			tester[0][i] = '═';
+			tester[boardsize-1][i] = '-';
+			tester[i][0] = '|';
+			tester[i][boardsize-1] = '|';
+		}
+		
+		String toReturn = "";
+		for (int i = 0; i<boardsize; i++){
+			for (int j = 0; j<boardsize; j++){
+				toReturn += tester[i][j];
+			}
+			toReturn += "\n";
+		}
+		return toReturn;
+	}
 }
 
 class Chain{
