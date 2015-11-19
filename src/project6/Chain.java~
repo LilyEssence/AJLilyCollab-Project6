@@ -1,0 +1,23 @@
+package Project6;
+
+public class Chain{
+    public enum Player {BLACK, WHITE}
+
+    Player color;
+
+    Collection<Piece> pieces;
+
+    public Chain(){
+	this.color = Player.BLACK;
+	pieces = new HashSet<?>();
+    }
+
+    public Chain(Player color){
+	this.color = color;
+    }
+
+
+    class Piece {
+	public int x_coord, y_coord;
+    }
+}
