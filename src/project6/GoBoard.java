@@ -7,19 +7,25 @@ import project6.Chain.Coord;
 import project6.Chain.Player;
 
 public class GoBoard {
-    public int[][] boardArray;
+	int boardSize;
+	public int[][] boardArray;
 
-    public GoBoard(){
-	boardArray = new int[9][9];
-    }
+	public GoBoard(){
+		boardArray = new int[9][9];
+	}
 
-    public GoBoard(int boardSize){
-	boardArray = new int[boardSize][boardSize];
-    }
-    
+	public GoBoard(int boardSize){
+		this.boardSize = boardSize;
+		boardArray = new int[boardSize][boardSize];
+	}
+
     public boolean hasFinished(){ 
     	//TODO
     	return false;
+    }
+    
+    public int getBoardSize(){
+    	return boardSize;
     }
 
 	public String getTextBoard() {
@@ -32,21 +38,43 @@ public class GoBoard {
 			}
 		}
 		
-		for (int i = 0; i<boardsize; i++){
-			tester[0][i] = '═';
-			tester[boardsize-1][i] = '-';
-			tester[i][0] = '|';
-			tester[i][boardsize-1] = '|';
-		}
+//		for (int i = 0; i<boardsize; i++){
+//			tester[0][i] = '━';
+//			tester[boardsize-1][i] = '-';
+//			tester[i][0] = '|';
+//			tester[i][boardsize-1] = '|';
+//		}		
 		
-		String toReturn = "";
+		String toReturn = " ";
 		for (int i = 0; i<boardsize; i++){
+			toReturn += (char)(97+i);
+		}
+		toReturn += '\n';
+		for (int i = 0; i<boardsize; i++){
+			toReturn += (char)(97+i);
 			for (int j = 0; j<boardsize; j++){
 				toReturn += tester[i][j];
 			}
 			toReturn += "\n";
 		}
 		return toReturn;
+	}
+
+	public boolean takeTurn(Player player, int x, int y) {
+		//check to see if x, y are valid inputs to board size
+		if ((x < 0) || (y < 0)){
+			return false;
+		}
+		if ((x > boardSize) || (y > boardSize)){
+			return false;
+		}
+		
+		//check to see if x, y are not occupied
+		
+		
+		//if it is not a valid turn, do not do anything, return false.
+		//if it's a valid turn, do the move, and return true;
+		return true;		
 	}
 }
 
