@@ -1,14 +1,18 @@
 package project6;
 
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.io.OutputStreamWriter;
 import java.util.Scanner;
 
 import project6.Chain.Player;
 
 public class GoUI {
 	public static void main( String [] cheese){
-		System.out.println("Default: " + new InputStreamReader(System.in).getEncoding());
+		PrintWriter stdout = new PrintWriter(
+				new OutputStreamWriter(System.out, StandardCharsets.UTF_8), true);
 		
 		System.out.println("Hello World! We're playing Go!");
 		Scanner keyboard = new Scanner(System.in);
@@ -26,7 +30,27 @@ public class GoUI {
 				System.out.println("Okay, let's play text!");
 				GoBoard goBoard = new GoBoard();
 				Player player = Player.BLACK;
-					System.out.println(goBoard.getTextBoard());
+				while(!goBoard.hasFinished()){
+					boolean isValidMove = false;
+					while (!isValidMove){
+						stdout.println(goBoard.getTextBoard());
+						System.out.println("Where would "+player.toString()+" like to go? Or Pass?");
+						String move = keyboard.nextLine();
+						int x = move.charAt(0)-97;
+						int y = move.charAt(1)-97;
+						System.out.println("X is: "+x+". Y is: "+y+".");
+						isValidMove = goBoard.takeTurn(player, x, y);
+						if (!isValidMove){
+							System.out.println("That's not a valid move. Try again.");
+						}
+					}
+					switch(player){
+						case BLACK: player = Player.WHITE; break;
+						case WHITE: player = Player.BLACK; break;
+						default: player = Player.BLACK; break;
+					}
+					System.out.println("Now it's "+player.toString()+" turn...");
+				}
 			}
 			else if (uiChoice.equals("graphical")){
 				isUIValid = true;
