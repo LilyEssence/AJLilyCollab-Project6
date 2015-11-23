@@ -71,7 +71,7 @@ public class GoBoard {
 		toReturn += '\n';
 		for (int i = 0; i<boardSize; i++){
 			for (int j = 0; j<boardSize; j++){
-				Player single = boardArray[i][j];
+				Player single = boardArray[j][i];
 				switch(single){
 				case BLACK:
 					toReturn += "X"; break;

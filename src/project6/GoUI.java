@@ -36,14 +36,17 @@ public class GoUI {
 						stdout.println(goBoard.getTextBoard());
 						System.out.println("Where would "+player.toString()+" like to go? Or Pass?");
 						String move = keyboard.nextLine();
-						int x = move.charAt(0)-97;
-						int y = move.charAt(1)-97;
+						char strx = move.charAt(0);
+						String stry = move.substring(1);
+						int x = strx-65;
+						int y = Integer.valueOf(stry)-1;
 						System.out.println("X is: "+x+". Y is: "+y+".");
 						isValidMove = goBoard.takeTurn(player, x, y);
 						if (!isValidMove){
 							System.out.println("That's not a valid move. Try again.");
 						}
 					}
+					//TODO: what to do if they pass?
 					switch(player){
 						case BLACK: player = Player.WHITE; break;
 						case WHITE: player = Player.BLACK; break;
