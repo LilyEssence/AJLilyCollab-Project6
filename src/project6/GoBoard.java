@@ -93,9 +93,10 @@ class Chain{
     public enum Player {BLACK, WHITE, NEUTRAL}
 
     Player color;
-
-    Collection<Coord> pieces;
-    Collection<Coord> liberties;
+    //We should use a set, I can't justify generalizing to a collection
+    //there shouldn't be any duplicate coordinates so a list doesn't work
+    Set<Coord> pieces;
+    Set<Coord> liberties;
 
     public Chain(){
 	this.color = Player.BLACK;
@@ -106,6 +107,16 @@ class Chain{
 	this.color = color;
     }
 
+    public addPiece(int x, int y){
+	//here we should add a piece to the chain?
+    }
+
+    public void updateLiberties(){
+	//I'm not sure how this might work
+	//or if it should even be apart of the chain
+	//it may be the case that this functionality is only used when adding a piece
+	//therefore should just be a part of addPiece
+    }
 
     class Coord {
 	public int x_coord, y_coord;
