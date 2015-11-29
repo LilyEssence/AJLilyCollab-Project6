@@ -2,6 +2,7 @@ package project6;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import project6.Chain.Coord;
 import project6.Chain.Player;
@@ -107,9 +108,15 @@ class Chain{
 	this.color = color;
     }
 
-    public addPiece(int x, int y){
+    public void addPiece(int x, int y){
 	//here we should add a piece to the chain?
     }
+    
+    /* What happens when we have a piece added to the board that connects 2 chains?
+     * We will surely combine them, but should we add them all to the a new chain?
+     * Or would it be better to just update one and delete the other?
+     * After that, we will need to update all the game spaces.
+     */
 
     public void updateLiberties(){
 	//I'm not sure how this might work
