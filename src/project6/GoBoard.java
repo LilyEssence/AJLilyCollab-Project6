@@ -152,13 +152,31 @@ class Chain{
 	 * new chain? Or would it be better to just update one and delete the other?
 	 * After that, we will need to update all the game spaces.
 	 */
+	
+	private static void merge(Chain a, Chain b){
+		//it should be the case that there are no duplicates
+		//we use sets so it shouldn't matter
+		a.pieces.addAll(b.pieces);
+		
+		//update the liberties of a
+		a.liberties.addAll(b.liberties);
+		
+		a.updateLiberties();
+		
+		//we need to change the identity of b on board into a
+		for(Coord c : b.pieces){
+			GoBoard.boardArray[c.x_coord][c.y_coord] = a;
+		}
+		
+	}
 
 	public void updateLiberties() {
-		// I'm not sure how this might work
-		// or if it should even be apart of the chain
-		// it may be the case that this functionality is only used when adding a
-		// piece
-		// therefore should just be a part of addPiece
+		//TODO This totally creates errors here lol
+		for(Coord c : liberties){
+			if(pieces.contains(c)){
+				liberties.remove(c);
+			}
+		}
 	}
 
 	class Coord {
