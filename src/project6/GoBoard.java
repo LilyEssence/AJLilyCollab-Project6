@@ -1,23 +1,23 @@
 package project6;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
-import project6.Chain.Coord;
 import project6.Chain.Player;
 
 public class GoBoard {
 	static int boardSize;
 	public static Chain[][] boardArray;
+	public static ArrayList<Chain> playerPieces = new ArrayList<Chain>();//this doesn't include neutral pieces
 
 	public GoBoard(){
 		this(19);
 	}
 
 	public GoBoard(int boardSize){
-		this.boardSize = boardSize;
+		GoBoard.boardSize = boardSize;
 		boardArray = new Chain[boardSize][boardSize];
 		
 		for (int i = 0; i<boardSize; i++){
@@ -42,8 +42,11 @@ public class GoBoard {
 		
 		//if it is not a valid turn, do not do anything, return false.
 		//if it's a valid turn, do the move, and return true;
-		boardArray[x][y] = Chain.addPiece(player, x, y);
-		return true;		
+		Chain toAdd = Chain.addPiece(player, x, y);
+		if(toAdd == null) return false;
+		
+		boardArray[x][y] = toAdd;
+		return true;
 	}
     
     public int getBoardSize(){
@@ -123,27 +126,38 @@ class Chain{
 		
 		//now that I have the adjacent chains
 		ArrayList<Chain> friends = new ArrayList<Chain>();
-		int enemies = 0;
+		ArrayList<Chain> enemies = new ArrayList<Chain>();
 		for(Chain c : neighbors){
 			if(c.color == color){
 				friends.add(c);
 			}
 			
-			if(c.color != color && c.color != Player.NEUTRAL) enemies++;
+			if(c.color != color && c.color != Player.NEUTRAL) enemies.add(c);
 		}
 		
 		//as it stands, this will only check if there are any similar adjacent pieces
 		//it may be the case that all adjacencies are the opposite color,
 		//	in which case it would not be valid.
 		
-		if(enemies == 4) return null;//yea, no.
+		if(enemies.size() == 4) return null;//yea, no.
 		
-		if(friends.isEmpty())
-			return new Chain(color, x, y);
+		for(Chain c : enemies){
+			c.liberties.remove(new Coord(x, y));
+		}
 		
+		Chain current = new Chain(color, x, y);
+		
+		if(friends.isEmpty()){
+			GoBoard.boardArray[x][y] = current;
+			return current;
+		}
+		
+		for(Chain f : friends){
+			current.merge(f);
+		}
 		
 		//in this last case, we need to connect all the adjacent chains and add this piece
-		return null;
+		return current;
 	}
 
 	/*
@@ -153,33 +167,59 @@ class Chain{
 	 * After that, we will need to update all the game spaces.
 	 */
 	
-	private static void merge(Chain a, Chain b){
+	private void merge(Chain b){
 		//it should be the case that there are no duplicates
 		//we use sets so it shouldn't matter
-		a.pieces.addAll(b.pieces);
+		pieces.addAll(b.pieces);
 		
 		//update the liberties of a
-		a.liberties.addAll(b.liberties);
+		liberties.addAll(b.liberties);
 		
-		a.updateLiberties();
+		updateLiberties();
 		
 		//we need to change the identity of b on board into a
 		for(Coord c : b.pieces){
-			GoBoard.boardArray[c.x_coord][c.y_coord] = a;
+			GoBoard.boardArray[c.x_coord][c.y_coord] = this;
 		}
 		
 	}
 
 	public void updateLiberties() {
-		//TODO This totally creates errors here lol
-		for(Coord c : liberties){
-			if(pieces.contains(c)){
-				liberties.remove(c);
-			}
+		Iterator<Coord> libIterator = liberties.iterator();
+		
+		while(libIterator.hasNext()){
+			Coord c = libIterator.next();
+			if(pieces.contains(c))
+				libIterator.remove();
 		}
 	}
 
-	class Coord {
-		public int x_coord, y_coord;
+}
+
+class Coord {
+	public int x_coord, y_coord;
+	public Coord(){
+		x_coord = 0;
+		y_coord = 0;
+	}
+	public Coord(int x, int y){
+		x_coord = x;
+		y_coord = y;
+	}
+	
+	@Override
+	public boolean equals(Object c){
+		if(!(c instanceof Coord)){
+			return false;
+		}
+		
+		Coord b = (Coord) c;
+	
+		return (x_coord == b.x_coord) && (y_coord == b.y_coord);
+	}
+	
+	@Override
+	public int hashCode(){
+		return x_coord*21 + y_coord;
 	}
 }
