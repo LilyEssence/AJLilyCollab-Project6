@@ -3,7 +3,6 @@ package project6;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import project6.Chain.Coord;
 import project6.Chain.Player;
 
 public class GoConsoleUI implements GoUI {
@@ -18,9 +17,9 @@ public class GoConsoleUI implements GoUI {
 	public void takeTurn() {		
 		boolean isValidMove = false;
 		while (!isValidMove){
-			stdout.println(goBoard.getTextBoard());
+			showBoard();
 			System.out.println("Where would "+player.toString()+" like to go? Or Pass?");
-
+			Coord move = getCoordinates();
 			System.out.println("X is: "+x+". Y is: "+y+".");
 			isValidMove = goBoard.takeTurn(player, x, y);
 			if (!isValidMove){
@@ -51,6 +50,45 @@ public class GoConsoleUI implements GoUI {
 	public boolean isFinished() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+
+	public String getTextBoard() {
+		// TODO Auto-generated method stub
+		char[][] tester = new char[goBoard.boardSize][goBoard.boardSize];
+		for (int i = 0; i<goBoard.boardSize; i++){
+			for (int j = 0; j<goBoard.boardSize; j++){
+				tester[i][j] = '+';
+			}
+		}
+		
+		String toReturn = "";
+		for (int i = 0; i<goBoard.boardSize; i++){
+			toReturn += (char)(65+i);
+		}
+		toReturn += '\n';
+		for (int i = 0; i<goBoard.boardSize; i++){
+			for (int j = 0; j<goBoard.boardSize; j++){
+				Player single = goBoard.boardArray[j][i].color;
+				switch(single){
+				case BLACK:
+					toReturn += "X"; break;
+				case NEUTRAL:
+					toReturn += "+"; break;
+				case WHITE:
+					toReturn += "O"; break;
+				default:
+					toReturn += "?"; break;				
+				}
+			}
+			toReturn += " "+(i+1)+"\n";
+		}
+		return toReturn;
+	}
+
+	@Override
+	public void showBoard() {
+		stdout.println(getTextBoard());
 	}
 
 }
