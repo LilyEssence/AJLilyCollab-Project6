@@ -122,10 +122,18 @@ class Chain{
 		allChains.add(this);
 		
 		//add liberties to the piece, should check if something is there huh
-		if(x < GoBoard.boardSize - 1) liberties.add(new Coord(x + 1, y));
-		if(y < GoBoard.boardSize - 1) liberties.add(new Coord(x, y + 1));
-		if(y > 0) liberties.add(new Coord(x, y - 1));
-		if(x > 0) liberties.add(new Coord(x - 1, y));
+		if(x < GoBoard.boardSize - 1 && 
+			GoBoard.boardArray[x+1][y].color == Player.NEUTRAL) 
+				liberties.add(new Coord(x + 1, y));
+		if(y < GoBoard.boardSize - 1 && 
+			GoBoard.boardArray[x][y+1].color == Player.NEUTRAL) 
+				liberties.add(new Coord(x, y + 1));
+		if(y > 0 && 
+			GoBoard.boardArray[x][y-1].color == Player.NEUTRAL)
+				liberties.add(new Coord(x, y - 1));
+		if(x > 0 && 
+			GoBoard.boardArray[x-1][y].color == Player.NEUTRAL) 
+				liberties.add(new Coord(x - 1, y));
 	}
 
 	public static Chain addPiece(Player color, int x, int y) {
