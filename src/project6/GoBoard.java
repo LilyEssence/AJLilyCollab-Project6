@@ -49,8 +49,17 @@ public class GoBoard {
 		return true;
 	}
 	
+	//removes any pieces that don't have any liberties left
+	//or rather, removes "dead" pieces
 	public void resolveLiberties(){
 		Chain.killSlaves();
+	}
+	
+	public int[] calculateTerritories(){
+		int black = 0;
+		int white = 0;
+		
+		return new int[]{black, white};
 	}
     
     public int getBoardSize(){
