@@ -7,7 +7,7 @@ import project6.Chain.Player;
 
 public class GoRunner {
 
-	public static void main( String [] cheese){
+	public static void main1( String [] cheese){
 		PrintStream stdout = System.out;
 		System.out.println("Hello World! We're playing Go!");
 		Scanner keyboard = new Scanner(System.in);
@@ -37,5 +37,20 @@ public class GoRunner {
 		}
 		
 		System.out.println("Goodbye!");
+	}
+	
+	public static void main(String[] args){
+		//strictly for testing
+		GoBoard board = new GoBoard(10);
+		//System.out.println(board.getTextBoard());
+		board.takeTurn(Player.WHITE, 1, 1);
+		board.takeTurn(Player.BLACK, 1, 0);
+		board.takeTurn(Player.BLACK, 0, 1);
+		board.takeTurn(Player.BLACK, 1, 2);
+		board.takeTurn(Player.BLACK, 2, 1);
+		System.out.println(board.getTextBoard());
+		board.resolveLiberties();
+		System.out.println(board.getTextBoard());
+		System.out.println(Chain.allChains.toString());
 	}
 }

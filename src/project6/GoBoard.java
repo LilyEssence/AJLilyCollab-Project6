@@ -10,7 +10,7 @@ import project6.Chain.Player;
 public class GoBoard {
 	static int boardSize;
 	public static Chain[][] boardArray;
-	public static ArrayList<Chain> playerPieces = new ArrayList<Chain>();//this doesn't include neutral pieces
+	//public static ArrayList<Chain> playerPieces;//this doesn't include neutral pieces
 
 	public GoBoard(){
 		this(19);
@@ -47,6 +47,10 @@ public class GoBoard {
 		
 		boardArray[x][y] = toAdd;
 		return true;
+	}
+	
+	public void resolveLiberties(){
+		Chain.killSlaves();
 	}
     
     public int getBoardSize(){
@@ -89,30 +93,39 @@ public class GoBoard {
 
 class Chain{
     public enum Player {BLACK, WHITE, NEUTRAL}
-    public static Set<Chain> allChains;
+    public static Set<Chain> allChains = new HashSet<Chain>();;
     
     Player color;
-    //We should use a set, I can't justify generalizing to a collection
-    //there shouldn't be any duplicate coordinates so a list doesn't work
     
-    //the chain should include every piece that its a part of?
+    //the chain should include every piece that its a part of
     Set<Coord> pieces;
     Set<Coord> liberties;
 
 	public Chain() {
 		this.color = Player.NEUTRAL;
 		pieces = new HashSet<Coord>();
-		allChains = new HashSet<Chain>();//I'm thinking a HashSet doesn't make sense here
+		liberties = new HashSet<Coord>();
+		
 	}
 
 	public Chain(Player color) {
 		this.color = color;
-		allChains = new HashSet<Chain>();
+		pieces = new HashSet<Coord>();
+		liberties = new HashSet<Coord>();
 	}
 	
 	public Chain(Player color, int x, int y){
 		this.color = color;
-		allChains = new HashSet<Chain>();
+		pieces = new HashSet<Coord>();
+		liberties = new HashSet<Coord>();
+		pieces.add(new Coord(x, y));
+		allChains.add(this);
+		
+		//add liberties to the piece, should check if something is there huh
+		if(x < GoBoard.boardSize - 1) liberties.add(new Coord(x + 1, y));
+		if(y < GoBoard.boardSize - 1) liberties.add(new Coord(x, y + 1));
+		if(y > 0) liberties.add(new Coord(x, y - 1));
+		if(x > 0) liberties.add(new Coord(x - 1, y));
 	}
 
 	public static Chain addPiece(Player color, int x, int y) {
@@ -154,10 +167,31 @@ class Chain{
 		
 		for(Chain f : friends){
 			current.merge(f);
+			allChains.remove(f);
 		}
 		
 		//in this last case, we need to connect all the adjacent chains and add this piece
 		return current;
+	}
+	
+	//so chains don't have liberties, they have to be slaves, no? or POWS? not sure . . .
+	//nevertheless, method name TBD
+	public static void killSlaves(){
+		Set<Chain> toRemove = new HashSet<Chain>();
+		for (Chain p : allChains){
+			if(p.liberties.isEmpty()){
+				toRemove.add(p);
+			}
+		}
+		
+		//remove p from the boardArray at all places
+		//update liberties of all remaining chains to get back liberties lost
+		for (Chain p : toRemove){
+			for(Coord c : p.pieces){
+				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain();//make neutral
+			}
+			allChains.remove(p);
+		}
 	}
 
 	/*
@@ -193,6 +227,11 @@ class Chain{
 				libIterator.remove();
 		}
 	}
+	
+	@Override
+	public String toString(){
+		return (color + "\n" + pieces.toString() + "\n" + liberties.toString());
+	}
 
 }
 
@@ -220,6 +259,11 @@ class Coord {
 	
 	@Override
 	public int hashCode(){
-		return x_coord*21 + y_coord;
+		return x_coord*21 + y_coord;//21 is arbitrary
+	}
+	
+	@Override
+	public String toString(){
+		return ("(" + x_coord + ", " + y_coord + ")");
 	}
 }
