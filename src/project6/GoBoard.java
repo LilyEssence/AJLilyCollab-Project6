@@ -202,7 +202,7 @@ class Chain{
 		}
 		
 		//remove p from the boardArray at all places
-		//update liberties of all remaining chains to get back liberties lost
+		//TODO update liberties of all remaining chains to get back liberties lost
 		for (Chain p : toRemove){
 			for(Coord c : p.pieces){
 				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain();//make neutral
@@ -243,6 +243,8 @@ class Chain{
 			if(pieces.contains(c))
 				libIterator.remove();
 		}
+		
+		//TODO check all pieces and add all their individual liberties
 	}
 	
 	@Override
