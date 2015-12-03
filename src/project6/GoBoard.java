@@ -115,7 +115,6 @@ public class GoBoard {
     }
 
 	public String getTextBoard() {
-		// TODO Auto-generated method stub
 		char[][] tester = new char[boardSize][boardSize];
 		for (int i = 0; i<boardSize; i++){
 			for (int j = 0; j<boardSize; j++){
@@ -259,12 +258,15 @@ class Chain{
 		}
 		
 		//remove p from the boardArray at all places
-		//TODO update liberties of all remaining chains to get back liberties lost
 		for (Chain p : toRemove){
 			for(Coord c : p.pieces){
 				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
 			}
 			allChains.remove(p);
+		}
+		
+		for(Chain p : allChains){
+			p.updateLiberties();
 		}
 	}
 
@@ -301,7 +303,26 @@ class Chain{
 				libIterator.remove();
 		}
 		
-		//TODO check all pieces and add all their individual liberties
+		for(Coord point : pieces){
+			int x = point.x_coord;
+			int y = point.y_coord;
+			if(point.x_coord > 0){
+				if(GoBoard.boardArray[x - 1][y].color == Player.NEUTRAL)
+					liberties.add(new Coord(x-1, y));
+			}
+			if(point.y_coord > 0){
+				if(GoBoard.boardArray[x][y-1].color == Player.NEUTRAL)
+					liberties.add(new Coord(x, y-1));
+			}
+			if(point.x_coord < GoBoard.boardSize-1){
+				if(GoBoard.boardArray[x + 1][y].color == Player.NEUTRAL)
+					liberties.add(new Coord(x+1, y));
+			}
+			if(point.y_coord < GoBoard.boardSize-1){
+				if(GoBoard.boardArray[x][y+1].color == Player.NEUTRAL)
+					liberties.add(new Coord(x, y+1));
+			}
+		}
 	}
 	
 	
