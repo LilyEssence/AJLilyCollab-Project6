@@ -20,8 +20,8 @@ public class GoConsoleUI implements GoUI {
 			showBoard();
 			System.out.println("Where would "+player.toString()+" like to go? Or Pass?");
 			Coord move = getCoordinates();
-			System.out.println("X is: "+x+". Y is: "+y+".");
-			isValidMove = goBoard.takeTurn(player, x, y);
+			System.out.println("X is: "+move.x_coord+". Y is: "+move.y_coord+".");
+			isValidMove = goBoard.takeTurn(player, move.x_coord, move.y_coord);
 			if (!isValidMove){
 				System.out.println("That's not a valid move. Try again.");
 			}
@@ -39,36 +39,46 @@ public class GoConsoleUI implements GoUI {
 	public Coord getCoordinates() {
 		// TODO Auto-generated method stub
 		String move = keyboard.nextLine();
-		char strx = move.charAt(0);
-		String stry = move.substring(1);
-		int x = strx-65;
-		int y = Integer.valueOf(stry)-1;
-		return new Coord(x,y);		
+		if (move.matches("\\b[A-Z,a-z]\\d{1,2}\\b")){
+			stdout.println("Processing this move: " + move);
+			move = move.toUpperCase();
+			char strx = move.charAt(0);
+			String stry = move.substring(1);
+			int x = strx-65;
+			int y = Integer.valueOf(stry)-1;
+			return new Coord(x,y);		
+		}
+		stdout.println("Move invalid");
+		return new Coord(-1,-1);
 	}
 
 	@Override
 	public boolean isFinished() {
-		// TODO Auto-generated method stub
-		return false;
+		return goBoard.hasFinished();
+	}
+
+	@Override
+	public void showBoard() {
+		stdout.println(getTextBoard());
 	}
 	
-
 	public String getTextBoard() {
+		int size = goBoard.getBoardSize();
 		// TODO Auto-generated method stub
-		char[][] tester = new char[goBoard.boardSize][goBoard.boardSize];
-		for (int i = 0; i<goBoard.boardSize; i++){
-			for (int j = 0; j<goBoard.boardSize; j++){
+		char[][] tester = new char[size][size];
+		for (int i = 0; i<size; i++){
+			for (int j = 0; j<size; j++){
 				tester[i][j] = '+';
 			}
 		}
 		
 		String toReturn = "";
-		for (int i = 0; i<goBoard.boardSize; i++){
+		for (int i = 0; i<size; i++){
 			toReturn += (char)(65+i);
 		}
 		toReturn += '\n';
-		for (int i = 0; i<goBoard.boardSize; i++){
-			for (int j = 0; j<goBoard.boardSize; j++){
+		for (int i = 0; i<size; i++){
+			for (int j = 0; j<size; j++){
 				Player single = goBoard.boardArray[j][i].color;
 				switch(single){
 				case BLACK:
@@ -84,11 +94,6 @@ public class GoConsoleUI implements GoUI {
 			toReturn += " "+(i+1)+"\n";
 		}
 		return toReturn;
-	}
-
-	@Override
-	public void showBoard() {
-		stdout.println(getTextBoard());
 	}
 
 }

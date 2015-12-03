@@ -1,45 +1,49 @@
 package project6;
 
-import java.io.PrintStream;
 import java.util.Scanner;
 
+import javafx.application.Application;
 import project6.Chain.Player;
 
 public class GoRunner {
 
-	public static void main1( String [] cheese){
-		PrintStream stdout = System.out;
+	public static void main( String [] cheese){
 		System.out.println("Hello World! We're playing Go!");
 		Scanner keyboard = new Scanner(System.in);
 		String uiChoice = "";
 		boolean isUIValid = false;
-		
+		GoUI goUI = new GoConsoleUI();
+
 		while (!isUIValid){
 			System.out.println("Do you want a text interface or a graphical interface?");
 			System.out.println("Ack- you don't get a choice right now. We're going with text.");
 			//uiChoice = keyboard.nextLine();
-			uiChoice = "text";
-			
+			uiChoice = "graphical";
+
 			if (uiChoice.equals("text")){
 				isUIValid = true;
 				System.out.println("Okay, let's play text!");
-				
-				
+				goUI = new GoConsoleUI();				
 			}
 			else if (uiChoice.equals("graphical")){
 				isUIValid = true;
 				System.out.println("Okay, let's open a graphical interface!");
-				
+				goUI = new GoGraphicalUI();
+				GoGraphicalUI.launch(GoGraphicalUI.class);
 			}
 			else {
 				System.out.println("Sorry, that's an invalid choice");
 			}
 		}
-		
+
+		while (!goUI.isFinished()){
+			goUI.takeTurn();
+		}
+
 		System.out.println("Goodbye!");
 	}
 	
-	public static void main(String[] args){
+	public static void main1(String[] args){
 		//strictly for testing
 		GoBoard board = new GoBoard(10);
 		//System.out.println(board.getTextBoard());
