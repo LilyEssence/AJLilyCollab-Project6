@@ -10,10 +10,12 @@ import project6.Chain.Player;
 public class GoBoard {
 	static int boardSize;
 	public static Chain[][] boardArray;
+	private static int numPasses;
 	//public static ArrayList<Chain> playerPieces;//this doesn't include neutral pieces
 
 	public GoBoard(){
 		this(19);
+		numPasses = 0;
 	}
 
 	public GoBoard(int boardSize){
@@ -25,14 +27,22 @@ public class GoBoard {
 				boardArray[i][j] = new Chain(i, j);
 			}
 		}
+		numPasses = 0;
 	}
 
     public boolean hasFinished(){ 
-    	//TODO
-    	return false;
+    	return numPasses >= 2;
     }
 
 	public boolean takeTurn(Player player, int x, int y) {
+		//neutral player means a pass
+		if(player == Player.NEUTRAL){
+			numPasses++;
+			return true;
+		}
+		else
+			numPasses = 0;
+		
 		//check to see if x, y are valid inputs to board size
 		if ((x < 0) || (y < 0)){ return false; }
 		
