@@ -22,7 +22,7 @@ public class GoBoard {
 		
 		for (int i = 0; i<boardSize; i++){
 			for (int j = 0; j<boardSize; j++){
-				boardArray[i][j] = new Chain();
+				boardArray[i][j] = new Chain(i, j);
 			}
 		}
 	}
@@ -59,7 +59,55 @@ public class GoBoard {
 		int black = 0;
 		int white = 0;
 		
+		for(int i = 0; i < boardSize; i++){
+			for(int j = 0; j < boardSize; j++){
+				Chain point = boardArray[i][j];
+				Player color = assignTerritory(point);
+				if(color == Player.BLACK) black++;
+				else if(color == Player.WHITE) white++;
+			}
+		}
+		
 		return new int[]{black, white};
+	}
+	
+	private Player assignTerritory(Chain c){
+		if(c.color != Player.NEUTRAL) return c.color;
+		
+		Coord position = c.pieces.iterator().next();
+		Player side = determineColor(position);
+		return side;
+	}
+	
+	private Player determineColor(Coord position){
+		//bound checking
+		if(position.x_coord >= boardSize || position.x_coord < 0) return Player.NEUTRAL;
+		if(position.y_coord >= boardSize || position.y_coord < 0) return Player.NEUTRAL;
+		
+		//check our own color,
+		Player col = boardArray[position.x_coord][position.y_coord].color;
+		//white or black is deterministic
+		if(col != Player.NEUTRAL) return col;
+		
+		HashSet<Player> neighbors = new HashSet<Player>();
+		
+		neighbors.add(determineColor(new Coord(position.x_coord, position.y_coord + 1)));//up
+		neighbors.add(determineColor(new Coord(position.x_coord+1, position.y_coord))); //right
+		neighbors.add(determineColor(new Coord(position.x_coord, position.y_coord - 1)));//down
+		neighbors.add(determineColor(new Coord(position.x_coord-1, position.y_coord)));//left
+		
+		if(neighbors.contains(Player.BLACK)){
+			if(neighbors.contains(Player.WHITE)){
+				return Player.NEUTRAL;
+			}
+			else
+				return Player.BLACK;
+		}
+		else if(neighbors.contains(Player.BLACK)){
+			return Player.WHITE;
+		}
+		else
+			return Player.NEUTRAL;
 	}
     
     public int getBoardSize(){
@@ -110,17 +158,26 @@ class Chain{
     Set<Coord> pieces;
     Set<Coord> liberties;
 
+    /* This is commented out because I want to prevent us from using it
 	public Chain() {
 		this.color = Player.NEUTRAL;
 		pieces = new HashSet<Coord>();
 		liberties = new HashSet<Coord>();
 		
 	}
+	*/
 
 	public Chain(Player color) {
 		this.color = color;
 		pieces = new HashSet<Coord>();
 		liberties = new HashSet<Coord>();
+	}
+	
+	public Chain(int x, int y){
+		this.color = Player.NEUTRAL;
+		pieces = new HashSet<Coord>();
+		liberties = new HashSet<Coord>();
+		pieces.add(new Coord(x, y));
 	}
 	
 	public Chain(Player color, int x, int y){
@@ -205,7 +262,7 @@ class Chain{
 		//TODO update liberties of all remaining chains to get back liberties lost
 		for (Chain p : toRemove){
 			for(Coord c : p.pieces){
-				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain();//make neutral
+				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
 			}
 			allChains.remove(p);
 		}
@@ -246,6 +303,7 @@ class Chain{
 		
 		//TODO check all pieces and add all their individual liberties
 	}
+	
 	
 	@Override
 	public String toString(){

@@ -43,9 +43,9 @@ public class GoRunner {
 		//strictly for testing
 		GoBoard board = new GoBoard(10);
 		//System.out.println(board.getTextBoard());
-		board.takeTurn(Player.WHITE, 1, 1);
 		board.takeTurn(Player.BLACK, 1, 0);
 		board.takeTurn(Player.BLACK, 0, 1);
+		board.takeTurn(Player.WHITE, 1, 1);
 		board.takeTurn(Player.BLACK, 1, 2);
 		board.takeTurn(Player.BLACK, 2, 1);
 		System.out.println(board.getTextBoard());
