@@ -1,9 +1,11 @@
 package project6;
 
-import project6.Chain.Coord;
-
 public interface GoUI {
 	public abstract void takeTurn();
+		//need to account for endgame, 
+		//when one player passes, and when both players pass
 	public abstract Coord getCoordinates();
 	public abstract boolean isFinished();	
+	
+	public abstract void showBoard();
 }

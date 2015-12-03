@@ -3,6 +3,7 @@ package project6;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.GridPane;
@@ -31,6 +32,12 @@ public class GoGraphicalUI extends Application implements GoUI{
 		gc = gridcanvas.getGraphicsContext2D();
 		gc.setFill(Color.LIGHTGREY);   
 		gc.fillRect(0,0,gridcanvas.getWidth(),gridcanvas.getHeight());
+		
+
+		Scene scene = new Scene(gridpane, 800, 600);
+		primaryStage.setScene(scene);
+
+		primaryStage.show();	     
 	}
 	
 	@Override
@@ -40,7 +47,8 @@ public class GoGraphicalUI extends Application implements GoUI{
 	}
 
 	@Override
-	public void getCoordinates() {
+	public Coord getCoordinates() {
+		return null;
 		// TODO Auto-generated method stub
 		
 	}
@@ -50,5 +58,10 @@ public class GoGraphicalUI extends Application implements GoUI{
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
+	@Override
+	public void showBoard() {
+		// TODO Auto-generated method stub
+		
+	}	
 }
