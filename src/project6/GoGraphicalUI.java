@@ -27,9 +27,9 @@ public class GoGraphicalUI extends Application implements GoUI{
 	static GraphicsContext gc;
 	static int width = 400;
 	static int height = 400;
-	Label blkPlayerLbl;
-	Label whtPlayerLbl;	
-	Label status;
+	static Label blkPlayerLbl;
+	static Label whtPlayerLbl;	
+	static Label status;
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -64,7 +64,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 		whtPlayerLbl = new Label("WHITE PLAYER");
 		playerLblBox.getChildren().addAll(blkPlayerLbl, whtPlayerLbl);
 		playerLblBox.setAlignment(Pos.CENTER_LEFT);
-
+		
 		playerLblBox.setSpacing(10);
 		playerLblBox.setPadding(new Insets(0, 20, 10, 20)); 
 		gridpane.add(playerLblBox, 1, 1, 1, 2);
@@ -101,21 +101,30 @@ public class GoGraphicalUI extends Application implements GoUI{
 		}		
 	}
 	
+	private void setStatus(String update){
+		System.out.println("does this get here?1");
+		status.setText("Status: "+update);
+	}
+	
 	@Override
 	public void takeTurn() {
 		// TODO Auto-generated method stub
 		boolean isValidMove = false;
-		while (!isValidMove){
-			showBoard();
-			switch(player){
-			case BLACK: blkPlayerLbl.setTextFill(Color.CRIMSON);
+		setStatus("Notifying player...");
+		switch(player){
+			case BLACK: System.out.println("does this get here?");
+						blkPlayerLbl.setTextFill(Color.CRIMSON); 
 						whtPlayerLbl.setTextFill(Color.BLACK); break;
 			case WHITE: blkPlayerLbl.setTextFill(Color.BLACK);
 						whtPlayerLbl.setTextFill(Color.CRIMSON); break;
 			default: 	blkPlayerLbl.setTextFill(Color.BLACK);
 						whtPlayerLbl.setTextFill(Color.BLACK); break;
-			}
-			Coord move = getCoordinates();
+		}
+		
+		while (!isValidMove){
+			showBoard();		
+			//Coord move = getCoordinates();
+			Coord move = new Coord(0,0);
 			System.out.println("X is: "+move.x_coord+". Y is: "+move.y_coord+".");
 			isValidMove = goBoard.takeTurn(player, move.x_coord, move.y_coord);
 			if (!isValidMove){
@@ -134,8 +143,6 @@ public class GoGraphicalUI extends Application implements GoUI{
 	@Override
 	public Coord getCoordinates() {
 		return null;
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -146,7 +153,15 @@ public class GoGraphicalUI extends Application implements GoUI{
 
 	@Override
 	public void showBoard() {
-		// TODO Auto-generated method stub
+		int size = goBoard.getBoardSize();
+		double slice = height/(size+1);
 		
+		for (int i = 0; i<size; i++){
+			for (int j = 0; j<size; j++){
+				switch (goBoard.boardArray[j][i].color){
+				case BLACK: gc.fillOval(x, y, w, h);
+				}
+			}
+		}
 	}	
 }
