@@ -73,6 +73,7 @@ public class GoBoard {
 		if(toAdd == null) return false;
 		
 		boardArray[x][y] = toAdd;
+		resolveLiberties();
 		return true;
 	}
 	
