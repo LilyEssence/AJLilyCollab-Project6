@@ -107,7 +107,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	}
 	
 	@Override
-	public void takeTurn() {
+	public static void takeTurn() {
 		// TODO Auto-generated method stub
 		boolean isValidMove = false;
 		setStatus("Notifying player...");
@@ -147,19 +147,24 @@ public class GoGraphicalUI extends Application implements GoUI{
 
 	@Override
 	public boolean isFinished() {
-		// TODO Auto-generated method stub
-		return false;
+		return goBoard.hasFinished();
 	}
 
 	@Override
 	public void showBoard() {
+		drawEmptyBoard();		
 		int size = goBoard.getBoardSize();
 		double slice = height/(size+1);
+		double bit = slice/2;
 		
 		for (int i = 0; i<size; i++){
 			for (int j = 0; j<size; j++){
 				switch (goBoard.boardArray[j][i].color){
-				case BLACK: gc.fillOval(x, y, w, h);
+				case BLACK: gc.setFill(Color.BLACK);
+							gc.fillOval(bit+slice*j, bit+slice*i, slice, slice); break;
+				case WHITE: gc.setFill(Color.WHITE);
+							gc.fillOval(bit+slice*j, bit+slice*i, slice, slice); break;
+				default: break;
 				}
 			}
 		}
