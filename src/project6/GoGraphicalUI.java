@@ -125,10 +125,6 @@ public class GoGraphicalUI extends Application implements GoUI{
 		switchPlayers();
 		setStatus("Now it's "+player.toString()+" turn...");
 		updateLblColor();
-		
-		if (goBoard.hasFinished()){
-			setStatus("WE'RE DONE IT WORKED HORAH BOYAH");
-		}
 	}
 	
 	public void switchPlayers(){
@@ -154,7 +150,6 @@ public class GoGraphicalUI extends Application implements GoUI{
 	public void takeTurn() {
 		boolean isValidMove = false;
 		showBoard();		
-		updateLblColor();		
 		while (!isValidMove){
 			showBoard();		
 			Coord move = getCoordinates();
@@ -166,6 +161,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 		}
 		showBoard();
 		switchPlayers();
+		updateLblColor();		
 	}
 
 	@Override
