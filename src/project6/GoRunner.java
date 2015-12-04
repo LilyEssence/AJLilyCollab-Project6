@@ -30,7 +30,8 @@ public class GoRunner {
 				System.out.println("Okay, let's open a graphical interface!");
 				goUI = new GoGraphicalUI();
 				GoGraphicalUI.launch(GoGraphicalUI.class);
-				GoGraphicalUI.takeTurn();			}
+			//	goUI.takeTurn();			
+			}
 			else {
 				System.out.println("Sorry, that's an invalid choice");
 			}

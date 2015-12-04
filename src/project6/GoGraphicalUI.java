@@ -31,6 +31,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	static Label whtPlayerLbl;	
 	static Label status;
 	
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Game of Go - Graphical User Interface");
@@ -75,6 +76,18 @@ public class GoGraphicalUI extends Application implements GoUI{
 		status.setAlignment(Pos.CENTER);
 		gridpane.add(status, 0, 3);
 		
+		//LE BUTTON
+		Button add1Button = new Button("LE GREAT BUTTON OF LE GREATNESS");
+		add1Button.setMaxWidth(Double.MAX_VALUE);
+		add1Button.setAlignment(Pos.CENTER);
+		add1Button.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				takeTurn();
+			}
+		});
+		gridpane.add(add1Button, 0, 4);
+		
 		Scene scene = new Scene(gridpane, 800, 600);
 		primaryStage.setScene(scene);
 
@@ -107,7 +120,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	}
 	
 	@Override
-	public static void takeTurn() {
+	public void takeTurn() {
 		// TODO Auto-generated method stub
 		boolean isValidMove = false;
 		setStatus("Notifying player...");
