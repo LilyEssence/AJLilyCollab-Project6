@@ -73,20 +73,21 @@ public class GoBoard {
 		if(toAdd == null) return false;
 		
 		boardArray[x][y] = toAdd;
-		resolveLiberties();
+		resolveLiberties(player);
 		return true;
 	}
 	
 	//removes any pieces that don't have any liberties left
 	//or rather, removes "dead" pieces
-	public void resolveLiberties(){
-		Chain.killSlaves();
+	public void resolveLiberties(Player current){
+		Chain.killSlaves(current);
 	}
 	
 	public float[] calculateTerritories(){
 		float black = 0;
 		float white = 0;
 		
+		Set<Chain> neutrals = mergeNeutrals();
 		for(int i = 0; i < boardSize; i++){
 			for(int j = 0; j < boardSize; j++){
 				Chain point = boardArray[i][j];
@@ -96,46 +97,55 @@ public class GoBoard {
 			}
 		}
 		
+		//for(Chain c : neutrals)
+		//	System.out.println(c.liberties.toString());
+		
 		return new float[]{black, white+komi};
 	}
 	
 	private Player assignTerritory(Chain c){
 		if(c.color != Player.NEUTRAL) return c.color;
 		
-		Coord position = c.pieces.iterator().next();
-		Player side = determineColor(position);
-		return side;
-	}
-	
-	private Player determineColor(Coord position){
-		//bound checking
-		if(position.x_coord >= boardSize || position.x_coord < 0) return Player.NEUTRAL;
-		if(position.y_coord >= boardSize || position.y_coord < 0) return Player.NEUTRAL;
-		
-		//check our own color,
-		Player col = boardArray[position.x_coord][position.y_coord].color;
-		//white or black is deterministic
-		if(col != Player.NEUTRAL) return col;
-		
-		HashSet<Player> neighbors = new HashSet<Player>();
-		
-		neighbors.add(determineColor(new Coord(position.x_coord, position.y_coord + 1)));//up
-		neighbors.add(determineColor(new Coord(position.x_coord+1, position.y_coord))); //right
-		neighbors.add(determineColor(new Coord(position.x_coord, position.y_coord - 1)));//down
-		neighbors.add(determineColor(new Coord(position.x_coord-1, position.y_coord)));//left
-		
-		if(neighbors.contains(Player.BLACK)){
-			if(neighbors.contains(Player.WHITE)){
-				return Player.NEUTRAL;
-			}
-			else
-				return Player.BLACK;
+		int black = 0;
+		int white = 0;
+		for(Coord pos : c.liberties){
+			Player legion = boardArray[pos.x_coord][pos.y_coord].color;
+			if(legion == Player.BLACK) black++;
+			if(legion == Player.WHITE) white++;
 		}
-		else if(neighbors.contains(Player.BLACK)){
+		
+		if(black == 0 && white > 0)
 			return Player.WHITE;
-		}
+		else if(black > 0 && white == 0)
+			return Player.BLACK;
 		else
 			return Player.NEUTRAL;
+	}
+	
+	private Set<Chain> mergeNeutrals(){
+		for(int i = 0; i < boardSize; i++){
+			for(int j = 0; j < boardSize; j++){
+				Chain pos = boardArray[i][j];
+				if(pos.color == Player.NEUTRAL)
+					if(i > 0){
+						if(boardArray[i-1][j].color == Player.NEUTRAL)
+							boardArray[i-1][j].merge(pos);
+					}
+					if(j < boardSize-1){
+						if(boardArray[i][j+1].color == Player.NEUTRAL)
+							pos.merge(boardArray[i][j+1]);
+					}
+			}
+		}
+		Set<Chain> toReturn = new HashSet<Chain>();
+		for(int i = 0; i < boardSize; i++){
+			for(int j = 0; j < boardSize; j++){
+				if(boardArray[i][j].color == Player.NEUTRAL)
+					toReturn.add(boardArray[i][j]);
+			}
+		}
+		
+		return toReturn;
 	}
     
     public int getBoardSize(){
@@ -277,11 +287,13 @@ class Chain{
 	
 	//so chains don't have liberties, they have to be slaves, no? or POWS? not sure . . .
 	//nevertheless, method name TBD
-	public static void killSlaves(){
+	public static void killSlaves(Player current){
 		Set<Chain> toRemove = new HashSet<Chain>();
 		for (Chain p : allChains){
-			if(p.liberties.isEmpty()){
-				toRemove.add(p);
+			if(p.color != current){
+				if(p.liberties.isEmpty()){
+					toRemove.add(p);
+				}
 			}
 		}
 		
@@ -293,8 +305,24 @@ class Chain{
 			allChains.remove(p);
 		}
 		
+		
 		for(Chain p : allChains){
 			p.updateLiberties();
+		}
+		
+		for (Chain p : allChains){
+			if(p.liberties.isEmpty()){
+				toRemove.add(p);
+			}
+		}
+		
+		toRemove.clear();
+		//remove p from the boardArray at all places
+		for (Chain p : toRemove){
+			for(Coord c : p.pieces){
+				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
+			}
+			allChains.remove(p);
 		}
 	}
 
@@ -305,7 +333,9 @@ class Chain{
 	 * After that, we will need to update all the game spaces.
 	 */
 	
-	private void merge(Chain b){
+	public void merge(Chain b){
+		//cant merge diff colors
+		if(this.color != b.color) return;
 		//it should be the case that there are no duplicates
 		//we use sets so it shouldn't matter
 		pieces.addAll(b.pieces);
@@ -331,23 +361,33 @@ class Chain{
 				libIterator.remove();
 		}
 		
+		Player open = Player.NEUTRAL;
+		
 		for(Coord point : pieces){
 			int x = point.x_coord;
 			int y = point.y_coord;
 			if(point.x_coord > 0){
-				if(GoBoard.boardArray[x - 1][y].color == Player.NEUTRAL)
+				if(GoBoard.boardArray[x-1][y].color != open && this.color == Player.NEUTRAL)
+					liberties.add(new Coord(x-1, y));
+				else if(GoBoard.boardArray[x - 1][y].color == open)
 					liberties.add(new Coord(x-1, y));
 			}
 			if(point.y_coord > 0){
-				if(GoBoard.boardArray[x][y-1].color == Player.NEUTRAL)
+				if(GoBoard.boardArray[x][y-1].color != open && this.color == Player.NEUTRAL)
+					liberties.add(new Coord(x, y-1));
+				else if(GoBoard.boardArray[x][y-1].color == open)
 					liberties.add(new Coord(x, y-1));
 			}
 			if(point.x_coord < GoBoard.boardSize-1){
-				if(GoBoard.boardArray[x + 1][y].color == Player.NEUTRAL)
+				if(GoBoard.boardArray[x+1][y].color != open && this.color == Player.NEUTRAL)
+					liberties.add(new Coord(x+1, y));
+				else if(GoBoard.boardArray[x + 1][y].color == open)
 					liberties.add(new Coord(x+1, y));
 			}
 			if(point.y_coord < GoBoard.boardSize-1){
-				if(GoBoard.boardArray[x][y+1].color == Player.NEUTRAL)
+				if(GoBoard.boardArray[x][y+1].color != open && this.color == Player.NEUTRAL)
+					liberties.add(new Coord(x, y+1));
+				else if(GoBoard.boardArray[x][y+1].color == open)
 					liberties.add(new Coord(x, y+1));
 			}
 		}
