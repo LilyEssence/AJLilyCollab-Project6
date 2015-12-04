@@ -8,4 +8,5 @@ public interface GoUI {
 	public abstract boolean isFinished();	
 	
 	public abstract void showBoard();
+	public abstract void declareWinner();
 }

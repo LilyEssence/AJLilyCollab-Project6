@@ -9,19 +9,31 @@ public class GoConsoleUI implements GoUI {
 
 	PrintStream stdout = System.out;
 	Scanner keyboard = new Scanner(System.in);
+	String move;
 	
 	GoBoard goBoard = new GoBoard();
 	Player player = Player.BLACK;
 	
 	@Override
 	public void takeTurn() {		
+		if (isFinished()){
+			return;
+		}
+		
 		boolean isValidMove = false;
 		while (!isValidMove){
 			showBoard();
 			System.out.println("Where would "+player.toString()+" like to go? Or Pass?");
-			Coord move = getCoordinates();
-			System.out.println("X is: "+move.x_coord+". Y is: "+move.y_coord+".");
-			isValidMove = goBoard.takeTurn(player, move.x_coord, move.y_coord);
+			move = keyboard.nextLine();
+			if (move.toLowerCase().matches("pass")){
+				goBoard.takeTurn(Player.NEUTRAL, 0, 0);
+				isValidMove = true;
+			}
+			else {
+				Coord move = getCoordinates();
+				System.out.println("X is: "+move.x_coord+". Y is: "+move.y_coord+".");
+				isValidMove = goBoard.takeTurn(player, move.x_coord, move.y_coord);
+			}
 			if (!isValidMove){
 				System.out.println("That's not a valid move. Try again.");
 			}
@@ -38,7 +50,6 @@ public class GoConsoleUI implements GoUI {
 	@Override
 	public Coord getCoordinates() {
 		// TODO Auto-generated method stub
-		String move = keyboard.nextLine();
 		if (move.matches("\\b[A-Z,a-z]\\d{1,2}\\b")){
 			stdout.println("Processing this move: " + move);
 			move = move.toUpperCase();
@@ -94,6 +105,14 @@ public class GoConsoleUI implements GoUI {
 			toReturn += " "+(i+1)+"\n";
 		}
 		return toReturn;
+	}
+
+	@Override
+	public void declareWinner() {
+		if (isFinished()){
+			float[] territory = goBoard.calculateTerritories();
+			System.out.println("BLACK HAS: "+territory[0] + " WHITE HAS: "+territory[1]);
+		}
 	}
 
 }

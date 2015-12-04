@@ -23,24 +23,22 @@ public class GoRunner {
 			if (uiChoice.equals("text")){
 				isUIValid = true;
 				System.out.println("Okay, let's play text!");
-				goUI = new GoConsoleUI();				
+				goUI = new GoConsoleUI();		
+				while (!goUI.isFinished()){
+					goUI.takeTurn();
+				}
+				goUI.declareWinner();
 			}
 			else if (uiChoice.equals("graphical")){
 				isUIValid = true;
 				System.out.println("Okay, let's open a graphical interface!");
 				goUI = new GoGraphicalUI();
 				GoGraphicalUI.launch(GoGraphicalUI.class);
-			//	goUI.takeTurn();			
 			}
 			else {
 				System.out.println("Sorry, that's an invalid choice");
 			}
 		}
-
-//		while (!goUI.isFinished()){
-//			goUI.takeTurn();
-//		}
-
 		System.out.println("Goodbye!");
 	}
 	

@@ -22,6 +22,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	
 	static GoBoard goBoard = new GoBoard();
 	Player player = Player.BLACK;
+	MouseEvent leClick;
 	
 	static GraphicsContext gc;
 	static int width = 400;
@@ -57,6 +58,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 			@Override
 			public void handle (MouseEvent mouseEvent) {
 				setStatus("X: " + mouseEvent.getX() + " Y: " + mouseEvent.getY());
+				leClick = mouseEvent;
 				takeTurn();
 			}
 		});		
@@ -76,6 +78,9 @@ public class GoGraphicalUI extends Application implements GoUI{
 			@Override
 			public void handle(ActionEvent event) {
 				pass();
+				if (isFinished()){
+					declareWinner();
+				}
 			}
 		});		
 		playerLblBox.getChildren().addAll(blkPlayerLbl, whtPlayerLbl, passBtn);
@@ -120,59 +125,54 @@ public class GoGraphicalUI extends Application implements GoUI{
 		switchPlayers();
 		setStatus("Now it's "+player.toString()+" turn...");
 		updateLblColor();
-		
-		if (goBoard.hasFinished()){
-			setStatus("WE'RE DONE IT WORKED HORAH BOYAH");
-		}
 	}
 	
 	public void switchPlayers(){
 		switch(player){
 		case BLACK: player = Player.WHITE; break;
 		case WHITE: player = Player.BLACK; break;
-		default: player = Player.BLACK; break;
+		default: player = Player.NEUTRAL; break;
 		}
 	}
 	
 	public void updateLblColor(){
 		switch(player){
-		case BLACK: System.out.println("does this get here?");
-					blkPlayerLbl.setTextFill(Color.CRIMSON); 
+		case BLACK: blkPlayerLbl.setTextFill(Color.CRIMSON); 
 					whtPlayerLbl.setTextFill(Color.GREY); break;
 		case WHITE: blkPlayerLbl.setTextFill(Color.GREY);
 					whtPlayerLbl.setTextFill(Color.CRIMSON); break;
 		default: 	blkPlayerLbl.setTextFill(Color.BLACK);
 					whtPlayerLbl.setTextFill(Color.BLACK); break;
-	}
+		}
 	}
 	
 	@Override
 	public void takeTurn() {
-		// TODO Auto-generated method stub
 		boolean isValidMove = false;
-		setStatus("Notifying player...");
-		showBoard();
-		
-		updateLblColor();
-		
+		showBoard();		
 		while (!isValidMove){
 			showBoard();		
-			//Coord move = getCoordinates();
-			Coord move = new Coord(0,0);
-			System.out.println("X is: "+move.x_coord+". Y is: "+move.y_coord+".");
+			Coord move = getCoordinates();
+			setStatus("X is: "+move.x_coord+". Y is: "+move.y_coord+".");
 			isValidMove = goBoard.takeTurn(player, move.x_coord, move.y_coord);
 			if (!isValidMove){
-				System.out.println("That's not a valid move. Try again.");
+				setStatus("That's not a valid move. Try again.");
 			}
 		}
-		//TODO: what to do if they pass?
+		showBoard();
 		switchPlayers();
-		System.out.println("Now it's "+player.toString()+" turn...");
+		updateLblColor();		
 	}
 
 	@Override
 	public Coord getCoordinates() {
-		return null;
+		int size = goBoard.getBoardSize();
+		double slice = height/(size+1);
+		double bit = slice/2;
+		
+		int x = (int)((leClick.getX()-bit)/slice); 
+		int y = (int)((leClick.getY()-bit)/slice);
+		return new Coord(x,y);
 	}
 
 	@Override
@@ -221,8 +221,15 @@ public class GoGraphicalUI extends Application implements GoUI{
 	}
 	
 	private void setStatus(String update){
-		System.out.println("does this get here?1");
 		status.setText("Status: "+update);
+	}
+
+	@Override
+	public void declareWinner() {
+		if (isFinished()){
+			float[] territory = goBoard.calculateTerritories();
+			setStatus("BLACK HAS: "+territory[0] + " WHITE HAS: "+territory[1]);
+		}
 	}
 	
 }
