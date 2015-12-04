@@ -1,10 +1,9 @@
 package project6;
 
-import java.awt.Rectangle;
-
+import javafx.scene.input.MouseEvent;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -30,8 +29,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	static Label blkPlayerLbl;
 	static Label whtPlayerLbl;	
 	static Label status;
-	
-	
+		
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Game of Go - Graphical User Interface");
@@ -55,6 +53,13 @@ public class GoGraphicalUI extends Application implements GoUI{
 		
 		//GO BOARD
 		Canvas gridcanvas = new Canvas(width, height);
+		gridcanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle (MouseEvent mouseEvent) {
+				setStatus("X: " + mouseEvent.getX() + " Y: " + mouseEvent.getY());
+				takeTurn();
+			}
+		});		
 		gc = gridcanvas.getGraphicsContext2D();
 		gridpane.add(gridcanvas, 0, 1, 1, 2);
 		drawEmptyBoard();			
@@ -63,12 +68,24 @@ public class GoGraphicalUI extends Application implements GoUI{
 		VBox playerLblBox = new VBox();
 		blkPlayerLbl = new Label("BLACK PLAYER");
 		whtPlayerLbl = new Label("WHITE PLAYER");
-		playerLblBox.getChildren().addAll(blkPlayerLbl, whtPlayerLbl);
+		//PASS BUTTON
+		Button passBtn = new Button("PASS");
+		passBtn.setMaxWidth(Double.MAX_VALUE);
+		passBtn.setAlignment(Pos.CENTER);
+		passBtn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				pass();
+			}
+		});		
+		playerLblBox.getChildren().addAll(blkPlayerLbl, whtPlayerLbl, passBtn);
 		playerLblBox.setAlignment(Pos.CENTER_LEFT);
 		
 		playerLblBox.setSpacing(10);
 		playerLblBox.setPadding(new Insets(0, 20, 10, 20)); 
 		gridpane.add(playerLblBox, 1, 1, 1, 2);
+
+		updateLblColor();
 		
 		//STATUS LABEL
 		status = new Label("STATUS: No problems yet");
@@ -77,16 +94,16 @@ public class GoGraphicalUI extends Application implements GoUI{
 		gridpane.add(status, 0, 3);
 		
 		//LE BUTTON
-		Button add1Button = new Button("LE GREAT BUTTON OF LE GREATNESS");
-		add1Button.setMaxWidth(Double.MAX_VALUE);
-		add1Button.setAlignment(Pos.CENTER);
-		add1Button.setOnAction(new EventHandler<ActionEvent>(){
+		Button testerBtn = new Button("LE GREAT BUTTON OF LE GREATNESS");
+		testerBtn.setMaxWidth(Double.MAX_VALUE);
+		testerBtn.setAlignment(Pos.CENTER);
+		testerBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
 				takeTurn();
 			}
 		});
-		gridpane.add(add1Button, 0, 4);
+		gridpane.add(testerBtn, 0, 4);		
 		
 		Scene scene = new Scene(gridpane, 800, 600);
 		primaryStage.setScene(scene);
@@ -94,29 +111,39 @@ public class GoGraphicalUI extends Application implements GoUI{
 		primaryStage.show();	     
 	}
 	
-	public void drawEmptyBoard(){	
-		gc.setFill(Color.MOCCASIN);   
-		gc.fillRect(0,0,width,height);
+	public void pass() {
+		if (goBoard.hasFinished()){
+			return;
+		}
 		
-		gc.setStroke(Color.BLACK);
-		gc.setLineWidth(3);
-		gc.strokeRect(0, 0, width, height);
+		goBoard.takeTurn(Player.NEUTRAL, 0, 0);
+		switchPlayers();
+		setStatus("Now it's "+player.toString()+" turn...");
+		updateLblColor();
 		
-		int size = goBoard.getBoardSize();
-		double slice = height/(size+1);
-		
-		gc.strokeRect(slice, slice, width-slice*2, height-slice*2);
-		
-		gc.setLineWidth(1);
-		for (int i = 2; i<= size-1; i++){
-			gc.strokeLine(slice*i, slice, slice*i, height-slice);
-			gc.strokeLine(slice, slice*i, height-slice, slice*i);
-		}		
+		if (goBoard.hasFinished()){
+			setStatus("WE'RE DONE IT WORKED HORAH BOYAH");
+		}
 	}
 	
-	private void setStatus(String update){
-		System.out.println("does this get here?1");
-		status.setText("Status: "+update);
+	public void switchPlayers(){
+		switch(player){
+		case BLACK: player = Player.WHITE; break;
+		case WHITE: player = Player.BLACK; break;
+		default: player = Player.BLACK; break;
+		}
+	}
+	
+	public void updateLblColor(){
+		switch(player){
+		case BLACK: System.out.println("does this get here?");
+					blkPlayerLbl.setTextFill(Color.CRIMSON); 
+					whtPlayerLbl.setTextFill(Color.GREY); break;
+		case WHITE: blkPlayerLbl.setTextFill(Color.GREY);
+					whtPlayerLbl.setTextFill(Color.CRIMSON); break;
+		default: 	blkPlayerLbl.setTextFill(Color.BLACK);
+					whtPlayerLbl.setTextFill(Color.BLACK); break;
+	}
 	}
 	
 	@Override
@@ -124,15 +151,9 @@ public class GoGraphicalUI extends Application implements GoUI{
 		// TODO Auto-generated method stub
 		boolean isValidMove = false;
 		setStatus("Notifying player...");
-		switch(player){
-			case BLACK: System.out.println("does this get here?");
-						blkPlayerLbl.setTextFill(Color.CRIMSON); 
-						whtPlayerLbl.setTextFill(Color.BLACK); break;
-			case WHITE: blkPlayerLbl.setTextFill(Color.BLACK);
-						whtPlayerLbl.setTextFill(Color.CRIMSON); break;
-			default: 	blkPlayerLbl.setTextFill(Color.BLACK);
-						whtPlayerLbl.setTextFill(Color.BLACK); break;
-		}
+		showBoard();
+		
+		updateLblColor();
 		
 		while (!isValidMove){
 			showBoard();		
@@ -145,11 +166,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 			}
 		}
 		//TODO: what to do if they pass?
-		switch(player){
-		case BLACK: player = Player.WHITE; break;
-		case WHITE: player = Player.BLACK; break;
-		default: player = Player.BLACK; break;
-		}
+		switchPlayers();
 		System.out.println("Now it's "+player.toString()+" turn...");
 	}
 
@@ -182,4 +199,30 @@ public class GoGraphicalUI extends Application implements GoUI{
 			}
 		}
 	}	
+	
+	public void drawEmptyBoard(){	
+		gc.setFill(Color.MOCCASIN);   
+		gc.fillRect(0,0,width,height);
+		
+		gc.setStroke(Color.BLACK);
+		gc.setLineWidth(3);
+		gc.strokeRect(0, 0, width, height);
+		
+		int size = goBoard.getBoardSize();
+		double slice = height/(size+1);
+		
+		gc.strokeRect(slice, slice, width-slice*2, height-slice*2);
+		
+		gc.setLineWidth(1);
+		for (int i = 2; i<= size-1; i++){
+			gc.strokeLine(slice*i, slice, slice*i, height-slice);
+			gc.strokeLine(slice, slice*i, height-slice, slice*i);
+		}		
+	}
+	
+	private void setStatus(String update){
+		System.out.println("does this get here?1");
+		status.setText("Status: "+update);
+	}
+	
 }
