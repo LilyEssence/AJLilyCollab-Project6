@@ -36,9 +36,9 @@ public class GoRunner {
 			}
 		}
 
-		while (!goUI.isFinished()){
-			goUI.takeTurn();
-		}
+//		while (!goUI.isFinished()){
+//			goUI.takeTurn();
+//		}
 
 		System.out.println("Goodbye!");
 	}
