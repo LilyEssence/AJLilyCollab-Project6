@@ -9,6 +9,7 @@ import project6.Chain.Player;
 
 public class GoBoard {
 	static int boardSize;
+	public static float komi;
 	public static Chain[][] boardArray;
 	private static int numPasses;
 	//public static ArrayList<Chain> playerPieces;//this doesn't include neutral pieces
@@ -16,6 +17,7 @@ public class GoBoard {
 	public GoBoard(){
 		this(19);
 		numPasses = 0;
+		komi = 5.5f;
 	}
 
 	public GoBoard(int boardSize){
@@ -28,7 +30,22 @@ public class GoBoard {
 			}
 		}
 		numPasses = 0;
+		komi = 5.5f;
 	}
+	
+	public GoBoard(int boardSize, float komi_val){
+		komi = komi_val;
+		GoBoard.boardSize = boardSize;
+		boardArray = new Chain[boardSize][boardSize];
+		
+		for (int i = 0; i<boardSize; i++){
+			for (int j = 0; j<boardSize; j++){
+				boardArray[i][j] = new Chain(i, j);
+			}
+		}
+		numPasses = 0;
+	}
+
 
     public boolean hasFinished(){ 
     	return numPasses >= 2;
@@ -65,20 +82,20 @@ public class GoBoard {
 		Chain.killSlaves();
 	}
 	
-	public int[] calculateTerritories(){
-		int black = 0;
-		int white = 0;
+	public float[] calculateTerritories(){
+		float black = 0;
+		float white = 0;
 		
 		for(int i = 0; i < boardSize; i++){
 			for(int j = 0; j < boardSize; j++){
 				Chain point = boardArray[i][j];
 				Player color = assignTerritory(point);
-				if(color == Player.BLACK) black++;
-				else if(color == Player.WHITE) white++;
+				if(color == Player.BLACK) black+=1;
+				else if(color == Player.WHITE) white+=1;
 			}
 		}
 		
-		return new int[]{black, white};
+		return new float[]{black, white+komi};
 	}
 	
 	private Player assignTerritory(Chain c){
