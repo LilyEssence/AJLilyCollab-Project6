@@ -19,16 +19,16 @@ import project6.Chain.Player;
 
 public class GoGraphicalUI extends Application implements GoUI{
 	
-	static GoBoard goBoard = new GoBoard();
-	Player player = Player.BLACK;
-	MouseEvent leClick;
+	private static GoBoard goBoard = new GoBoard();
+	private Player player = Player.BLACK;
+	private MouseEvent leClick;
 	
-	static GraphicsContext gc;
-	static int width = 400;
-	static int height = 400;
-	static Label blkPlayerLbl;
-	static Label whtPlayerLbl;	
-	static Label status;
+	private static GraphicsContext gc;
+	private static int width = 400;
+	private static int height = 400;
+	private static Label blkPlayerLbl;
+	private static Label whtPlayerLbl;	
+	private static Label status;
 		
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -56,6 +56,10 @@ public class GoGraphicalUI extends Application implements GoUI{
 		gridcanvas.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle (MouseEvent mouseEvent) {
+				if (isFinished()){
+					return;
+				}
+				
 				setStatus("X: " + mouseEvent.getX() + " Y: " + mouseEvent.getY());
 				leClick = mouseEvent;
 				takeTurn();
@@ -116,11 +120,14 @@ public class GoGraphicalUI extends Application implements GoUI{
 	}
 	
 	public void pass() {
+
+		goBoard.takeTurn(Player.NEUTRAL, 0, 0);
 		if (goBoard.hasFinished()){
+			blkPlayerLbl.setTextFill(Color.BLACK);
+			whtPlayerLbl.setTextFill(Color.BLACK);
 			return;
 		}
 		
-		goBoard.takeTurn(Player.NEUTRAL, 0, 0);
 		switchPlayers();
 		setStatus("Now it's "+player.toString()+" turn...");
 		updateLblColor();
@@ -231,7 +238,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	public void declareWinner() {
 		if (isFinished()){
 			float[] territory = goBoard.calculateTerritories();
-			setStatus("BLACK HAS: "+territory[0] + " WHITE HAS: "+territory[1]);
+			setStatus("THE GAME HAS ENDED. BLACK HAS: "+territory[0] + " WHITE HAS: "+territory[1]);
 		}
 	}
 	

@@ -39,19 +39,4 @@ public class GoRunner {
 		}
 		System.out.println("Goodbye!");
 	}
-	
-	public static void main1(String[] args){
-		//strictly for testing
-		GoBoard board = new GoBoard(10);
-		//System.out.println(board.getTextBoard());
-		board.takeTurn(Player.BLACK, 1, 0);
-		board.takeTurn(Player.BLACK, 0, 1);
-		board.takeTurn(Player.WHITE, 1, 1);
-		board.takeTurn(Player.BLACK, 1, 2);
-		board.takeTurn(Player.BLACK, 2, 1);
-		//System.out.println(board.getTextBoard());
-		//board.resolveLiberties();
-		//System.out.println(board.getTextBoard());
-		System.out.println(Chain.allChains.toString());
-	}
 }

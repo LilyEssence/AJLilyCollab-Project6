@@ -7,12 +7,12 @@ import project6.Chain.Player;
 
 public class GoConsoleUI implements GoUI {
 
-	PrintStream stdout = System.out;
-	Scanner keyboard = new Scanner(System.in);
-	String move;
+	private PrintStream stdout = System.out;
+	private Scanner keyboard = new Scanner(System.in);
+	private String move;
 	
-	GoBoard goBoard = new GoBoard();
-	Player player = Player.BLACK;
+	private GoBoard goBoard = new GoBoard();
+	private Player player = Player.BLACK;
 	
 	@Override
 	public void takeTurn() {		
@@ -38,7 +38,6 @@ public class GoConsoleUI implements GoUI {
 				System.out.println("That's not a valid move. Try again.");
 			}
 		}
-		//TODO: what to do if they pass?
 		switch(player){
 		case BLACK: player = Player.WHITE; break;
 		case WHITE: player = Player.BLACK; break;
@@ -49,7 +48,6 @@ public class GoConsoleUI implements GoUI {
 
 	@Override
 	public Coord getCoordinates() {
-		// TODO Auto-generated method stub
 		if (move.matches("\\b[A-Z,a-z]\\d{1,2}\\b")){
 			stdout.println("Processing this move: " + move);
 			move = move.toUpperCase();
@@ -70,41 +68,7 @@ public class GoConsoleUI implements GoUI {
 
 	@Override
 	public void showBoard() {
-		stdout.println(getTextBoard());
-	}
-	
-	public String getTextBoard() {
-		int size = goBoard.getBoardSize();
-		// TODO Auto-generated method stub
-		char[][] tester = new char[size][size];
-		for (int i = 0; i<size; i++){
-			for (int j = 0; j<size; j++){
-				tester[i][j] = '+';
-			}
-		}
-		
-		String toReturn = "";
-		for (int i = 0; i<size; i++){
-			toReturn += (char)(65+i);
-		}
-		toReturn += '\n';
-		for (int i = 0; i<size; i++){
-			for (int j = 0; j<size; j++){
-				Player single = goBoard.getBoardArray()[j][i].color;
-				switch(single){
-				case BLACK:
-					toReturn += "X"; break;
-				case NEUTRAL:
-					toReturn += "+"; break;
-				case WHITE:
-					toReturn += "O"; break;
-				default:
-					toReturn += "?"; break;				
-				}
-			}
-			toReturn += " "+(i+1)+"\n";
-		}
-		return toReturn;
+		stdout.println(goBoard.getTextBoard());
 	}
 
 	@Override

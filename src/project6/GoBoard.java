@@ -134,6 +134,10 @@ public class GoBoard {
 			return Player.NEUTRAL;
 	}
 	
+	public Set<Chain> debugger(){
+		return mergeNeutrals();
+	}
+	
 	private Set<Chain> mergeNeutrals(){
 		for(int i = 0; i < boardSize; i++){
 			for(int j = 0; j < boardSize; j++){
@@ -186,6 +190,39 @@ public class GoBoard {
     public static int getBoardSize(){
     	return boardSize;
     }
+    
+	public String getTextBoard() {
+		int size = GoBoard.getBoardSize();
+		char[][] tester = new char[size][size];
+		for (int i = 0; i<size; i++){
+			for (int j = 0; j<size; j++){
+				tester[i][j] = '+';
+			}
+		}
+		
+		String toReturn = "";
+		for (int i = 0; i<size; i++){
+			toReturn += (char)(65+i);
+		}
+		toReturn += '\n';
+		for (int i = 0; i<size; i++){
+			for (int j = 0; j<size; j++){
+				Player single = GoBoard.getBoardArray()[j][i].color;
+				switch(single){
+				case BLACK:
+					toReturn += "X"; break;
+				case NEUTRAL:
+					toReturn += "+"; break;
+				case WHITE:
+					toReturn += "O"; break;
+				default:
+					toReturn += "?"; break;				
+				}
+			}
+			toReturn += " "+(i+1)+"\n";
+		}
+		return toReturn;
+	}
 }
 
 class Chain{
@@ -283,6 +320,8 @@ class Chain{
 			current.merge(f);
 			allChains.remove(f);
 		}
+		
+		current.updateLiberties();
 		
 		//in this last case, we need to connect all the adjacent chains and add this piece
 		return current;
