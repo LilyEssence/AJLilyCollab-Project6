@@ -1,8 +1,6 @@
 package project6;
 
 import java.util.Scanner;
-
-import javafx.application.Application;
 import project6.Chain.Player;
 
 public class GoRunner {
