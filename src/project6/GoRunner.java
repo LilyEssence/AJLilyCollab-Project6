@@ -50,7 +50,7 @@ public class GoRunner {
 		board.takeTurn(Player.BLACK, 1, 2);
 		board.takeTurn(Player.BLACK, 2, 1);
 		System.out.println(board.getTextBoard());
-		board.resolveLiberties();
+		//board.resolveLiberties();
 		System.out.println(board.getTextBoard());
 		System.out.println(Chain.allChains.toString());
 	}

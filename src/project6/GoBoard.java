@@ -151,38 +151,6 @@ public class GoBoard {
     public int getBoardSize(){
     	return boardSize;
     }
-
-	public String getTextBoard() {
-		char[][] tester = new char[boardSize][boardSize];
-		for (int i = 0; i<boardSize; i++){
-			for (int j = 0; j<boardSize; j++){
-				tester[i][j] = '+';
-			}
-		}
-		
-		String toReturn = "";
-		for (int i = 0; i<boardSize; i++){
-			toReturn += (char)(65+i);
-		}
-		toReturn += '\n';
-		for (int i = 0; i<boardSize; i++){
-			for (int j = 0; j<boardSize; j++){
-				Player single = boardArray[j][i].color;
-				switch(single){
-				case BLACK:
-					toReturn += "X"; break;
-				case NEUTRAL:
-					toReturn += "+"; break;
-				case WHITE:
-					toReturn += "O"; break;
-				default:
-					toReturn += "?"; break;				
-				}
-			}
-			toReturn += " "+(i+1)+"\n";
-		}
-		return toReturn;
-	}
 }
 
 class Chain{
