@@ -1,3 +1,6 @@
+//Arjun Teh, agt495
+//Linda Xie, LX775
+
 package project6;
 
 public interface GoUI {
