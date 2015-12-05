@@ -15,8 +15,8 @@ public class GoRunner {
 		while (!isUIValid){
 			System.out.println("Do you want a text interface or a graphical interface?");
 			//System.out.println("Ack- you don't get a choice right now. We're going with text.");
-			//uiChoice = keyboard.nextLine();
-			uiChoice = "graphical";
+			uiChoice = keyboard.nextLine();
+			//uiChoice = "graphical";
 
 			if (uiChoice.equals("text")){
 				isUIValid = true;
