@@ -263,7 +263,7 @@ class Chain{
 		//it may be the case that all adjacencies are the opposite color,
 		//	in which case it would not be valid.
 		
-		if(enemies.size() == 4) return null;//yea, no.
+		//if(enemies.size() == 4) return null;//yea, no.
 		
 		for(Chain c : enemies){
 			c.liberties.remove(new Coord(x, y));
