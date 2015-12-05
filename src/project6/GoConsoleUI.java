@@ -90,7 +90,7 @@ public class GoConsoleUI implements GoUI {
 		toReturn += '\n';
 		for (int i = 0; i<size; i++){
 			for (int j = 0; j<size; j++){
-				Player single = goBoard.boardArray[j][i].color;
+				Player single = goBoard.getBoardArray()[j][i].color;
 				switch(single){
 				case BLACK:
 					toReturn += "X"; break;

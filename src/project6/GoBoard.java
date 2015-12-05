@@ -8,12 +8,24 @@ import java.util.Set;
 import project6.Chain.Player;
 
 public class GoBoard {
-	static int boardSize;
-	public static float komi;
-	public static Chain[][] boardArray;
+	private static int boardSize;
+	private static float komi;
+	private static Chain[][] boardArray;
 	private static int numPasses;
 	//public static ArrayList<Chain> playerPieces;//this doesn't include neutral pieces
 
+	public static float getKomi(){
+		return komi;
+	}
+	
+	public static Chain[][] getBoardArray(){
+		return boardArray;
+	}
+	
+	public static int getNumPasses(){
+		return numPasses;
+	}
+	
 	public GoBoard(){
 		this(19);
 		numPasses = 0;
@@ -148,7 +160,7 @@ public class GoBoard {
 		return toReturn;
 	}
     
-    public int getBoardSize(){
+    public static int getBoardSize(){
     	return boardSize;
     }
 }
@@ -193,17 +205,17 @@ class Chain{
 		allChains.add(this);
 		
 		//add liberties to the piece, should check if something is there huh
-		if(x < GoBoard.boardSize - 1 && 
-			GoBoard.boardArray[x+1][y].color == Player.NEUTRAL) 
+		if(x < GoBoard.getBoardSize() - 1 && 
+			GoBoard.getBoardArray()[x+1][y].color == Player.NEUTRAL) 
 				liberties.add(new Coord(x + 1, y));
-		if(y < GoBoard.boardSize - 1 && 
-			GoBoard.boardArray[x][y+1].color == Player.NEUTRAL) 
+		if(y < GoBoard.getBoardSize() - 1 && 
+			GoBoard.getBoardArray()[x][y+1].color == Player.NEUTRAL) 
 				liberties.add(new Coord(x, y + 1));
 		if(y > 0 && 
-			GoBoard.boardArray[x][y-1].color == Player.NEUTRAL)
+			GoBoard.getBoardArray()[x][y-1].color == Player.NEUTRAL)
 				liberties.add(new Coord(x, y - 1));
 		if(x > 0 && 
-			GoBoard.boardArray[x-1][y].color == Player.NEUTRAL) 
+			GoBoard.getBoardArray()[x-1][y].color == Player.NEUTRAL) 
 				liberties.add(new Coord(x - 1, y));
 	}
 
@@ -211,10 +223,10 @@ class Chain{
 		// here we should add a piece to the chain?
 		//First we check to see if there are any pieces around it.
 		ArrayList<Chain> neighbors = new ArrayList<Chain>(); //top clockwise
-		if(y < GoBoard.boardSize - 1) neighbors.add(GoBoard.boardArray[x][y + 1]);
-		if(x < GoBoard.boardSize - 1) neighbors.add(GoBoard.boardArray[x + 1][y]);
-		if(y > 0) neighbors.add(GoBoard.boardArray[x][y - 1]);
-		if(x > 0) neighbors.add(GoBoard.boardArray[x - 1][y]);
+		if(y < GoBoard.getBoardSize() - 1) neighbors.add(GoBoard.getBoardArray()[x][y + 1]);
+		if(x < GoBoard.getBoardSize() - 1) neighbors.add(GoBoard.getBoardArray()[x + 1][y]);
+		if(y > 0) neighbors.add(GoBoard.getBoardArray()[x][y - 1]);
+		if(x > 0) neighbors.add(GoBoard.getBoardArray()[x - 1][y]);
 		
 		//now that I have the adjacent chains
 		ArrayList<Chain> friends = new ArrayList<Chain>();
@@ -240,7 +252,7 @@ class Chain{
 		Chain current = new Chain(color, x, y);
 		
 		if(friends.isEmpty()){
-			GoBoard.boardArray[x][y] = current;
+			GoBoard.getBoardArray()[x][y] = current;
 			return current;
 		}
 		
@@ -268,7 +280,7 @@ class Chain{
 		//remove p from the boardArray at all places
 		for (Chain p : toRemove){
 			for(Coord c : p.pieces){
-				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
+				GoBoard.getBoardArray()[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
 			}
 			allChains.remove(p);
 		}
@@ -288,7 +300,7 @@ class Chain{
 		//remove p from the boardArray at all places
 		for (Chain p : toRemove){
 			for(Coord c : p.pieces){
-				GoBoard.boardArray[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
+				GoBoard.getBoardArray()[c.x_coord][c.y_coord] = new Chain(c.x_coord, c.y_coord);//make neutral
 			}
 			allChains.remove(p);
 		}
@@ -315,7 +327,7 @@ class Chain{
 		
 		//we need to change the identity of b on board into a
 		for(Coord c : b.pieces){
-			GoBoard.boardArray[c.x_coord][c.y_coord] = this;
+			GoBoard.getBoardArray()[c.x_coord][c.y_coord] = this;
 		}
 		
 	}
@@ -335,27 +347,27 @@ class Chain{
 			int x = point.x_coord;
 			int y = point.y_coord;
 			if(point.x_coord > 0){
-				if(GoBoard.boardArray[x-1][y].color != open && this.color == Player.NEUTRAL)
+				if(GoBoard.getBoardArray()[x-1][y].color != open && this.color == Player.NEUTRAL)
 					liberties.add(new Coord(x-1, y));
-				else if(GoBoard.boardArray[x - 1][y].color == open)
+				else if(GoBoard.getBoardArray()[x - 1][y].color == open)
 					liberties.add(new Coord(x-1, y));
 			}
 			if(point.y_coord > 0){
-				if(GoBoard.boardArray[x][y-1].color != open && this.color == Player.NEUTRAL)
+				if(GoBoard.getBoardArray()[x][y-1].color != open && this.color == Player.NEUTRAL)
 					liberties.add(new Coord(x, y-1));
-				else if(GoBoard.boardArray[x][y-1].color == open)
+				else if(GoBoard.getBoardArray()[x][y-1].color == open)
 					liberties.add(new Coord(x, y-1));
 			}
-			if(point.x_coord < GoBoard.boardSize-1){
-				if(GoBoard.boardArray[x+1][y].color != open && this.color == Player.NEUTRAL)
+			if(point.x_coord < GoBoard.getBoardSize()-1){
+				if(GoBoard.getBoardArray()[x+1][y].color != open && this.color == Player.NEUTRAL)
 					liberties.add(new Coord(x+1, y));
-				else if(GoBoard.boardArray[x + 1][y].color == open)
+				else if(GoBoard.getBoardArray()[x + 1][y].color == open)
 					liberties.add(new Coord(x+1, y));
 			}
-			if(point.y_coord < GoBoard.boardSize-1){
-				if(GoBoard.boardArray[x][y+1].color != open && this.color == Player.NEUTRAL)
+			if(point.y_coord < GoBoard.getBoardSize()-1){
+				if(GoBoard.getBoardArray()[x][y+1].color != open && this.color == Player.NEUTRAL)
 					liberties.add(new Coord(x, y+1));
-				else if(GoBoard.boardArray[x][y+1].color == open)
+				else if(GoBoard.getBoardArray()[x][y+1].color == open)
 					liberties.add(new Coord(x, y+1));
 			}
 		}

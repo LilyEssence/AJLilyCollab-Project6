@@ -92,22 +92,22 @@ public class GoGraphicalUI extends Application implements GoUI{
 		updateLblColor();
 		
 		//STATUS LABEL
-		status = new Label("STATUS: No problems yet");
+		status = new Label("Welcome to the Game of Go!");
 		status.setMaxWidth(Double.MAX_VALUE);
 		status.setAlignment(Pos.CENTER);
 		gridpane.add(status, 0, 3);
 		
 		//LE BUTTON
-		Button testerBtn = new Button("LE GREAT BUTTON OF LE GREATNESS");
-		testerBtn.setMaxWidth(Double.MAX_VALUE);
-		testerBtn.setAlignment(Pos.CENTER);
-		testerBtn.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
-			public void handle(ActionEvent event) {
-				takeTurn();
-			}
-		});
-		gridpane.add(testerBtn, 0, 4);		
+//		Button testerBtn = new Button("LE GREAT BUTTON OF LE GREATNESS");
+//		testerBtn.setMaxWidth(Double.MAX_VALUE);
+//		testerBtn.setAlignment(Pos.CENTER);
+//		testerBtn.setOnAction(new EventHandler<ActionEvent>(){
+//			@Override
+//			public void handle(ActionEvent event) {
+//				takeTurn();
+//			}
+//		});
+//		gridpane.add(testerBtn, 0, 4);		
 		
 		Scene scene = new Scene(gridpane, 800, 600);
 		primaryStage.setScene(scene);
@@ -147,6 +147,10 @@ public class GoGraphicalUI extends Application implements GoUI{
 	
 	@Override
 	public void takeTurn() {
+		if (goBoard.hasFinished()){
+			return;
+		}
+		
 		boolean isValidMove = false;
 		showBoard();		
 		while (!isValidMove){
@@ -165,7 +169,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 
 	@Override
 	public Coord getCoordinates() {
-		int size = goBoard.getBoardSize();
+		int size = GoBoard.getBoardSize();
 		double slice = height/(size+1);
 		double bit = slice/2;
 		
@@ -182,13 +186,13 @@ public class GoGraphicalUI extends Application implements GoUI{
 	@Override
 	public void showBoard() {
 		drawEmptyBoard();		
-		int size = goBoard.getBoardSize();
+		int size = GoBoard.getBoardSize();
 		double slice = height/(size+1);
 		double bit = slice/2;
 		
 		for (int i = 0; i<size; i++){
 			for (int j = 0; j<size; j++){
-				switch (goBoard.boardArray[j][i].color){
+				switch (GoBoard.getBoardArray()[j][i].color){
 				case BLACK: gc.setFill(Color.BLACK);
 							gc.fillOval(bit+slice*j, bit+slice*i, slice, slice); break;
 				case WHITE: gc.setFill(Color.WHITE);
@@ -207,7 +211,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 		gc.setLineWidth(3);
 		gc.strokeRect(0, 0, width, height);
 		
-		int size = goBoard.getBoardSize();
+		int size = GoBoard.getBoardSize();
 		double slice = height/(size+1);
 		
 		gc.strokeRect(slice, slice, width-slice*2, height-slice*2);
@@ -220,7 +224,7 @@ public class GoGraphicalUI extends Application implements GoUI{
 	}
 	
 	private void setStatus(String update){
-		status.setText("Status: "+update);
+		status.setText(update);
 	}
 
 	@Override

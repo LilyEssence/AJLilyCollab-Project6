@@ -14,13 +14,13 @@ public class GoRunner {
 
 		while (!isUIValid){
 			System.out.println("Do you want a text interface or a graphical interface?");
-			System.out.println("Ack- you don't get a choice right now. We're going with text.");
+			//System.out.println("Ack- you don't get a choice right now. We're going with text.");
 			//uiChoice = keyboard.nextLine();
 			uiChoice = "graphical";
 
 			if (uiChoice.equals("text")){
 				isUIValid = true;
-				System.out.println("Okay, let's play text!");
+				System.out.println("Okay, let's play via text!");
 				goUI = new GoConsoleUI();		
 				while (!goUI.isFinished()){
 					goUI.takeTurn();
@@ -49,9 +49,9 @@ public class GoRunner {
 		board.takeTurn(Player.WHITE, 1, 1);
 		board.takeTurn(Player.BLACK, 1, 2);
 		board.takeTurn(Player.BLACK, 2, 1);
-		System.out.println(board.getTextBoard());
+		//System.out.println(board.getTextBoard());
 		//board.resolveLiberties();
-		System.out.println(board.getTextBoard());
+		//System.out.println(board.getTextBoard());
 		System.out.println(Chain.allChains.toString());
 	}
 }
