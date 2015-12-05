@@ -138,15 +138,38 @@ public class GoBoard {
 		for(int i = 0; i < boardSize; i++){
 			for(int j = 0; j < boardSize; j++){
 				Chain pos = boardArray[i][j];
-				if(pos.color == Player.NEUTRAL)
-					if(i > 0){
-						if(boardArray[i-1][j].color == Player.NEUTRAL)
-							boardArray[i-1][j].merge(pos);
+				if(pos.color == Player.NEUTRAL){
+					Chain up = null, down = null, left = null, right = null;
+					if(j < boardSize-1) up = boardArray[i][j+1];
+					if(j > 0)			down = boardArray[i][j-1];
+					if(i < boardSize-1) right = boardArray[i+1][j];
+					if(i > 0)			left = boardArray[i-1][j];
+				
+					if(up != null){
+						if(up.color == Player.NEUTRAL)
+							pos.merge(up);
+						else
+							pos.liberties.add(new Coord(i, j+1));
 					}
-					if(j < boardSize-1){
-						if(boardArray[i][j+1].color == Player.NEUTRAL)
-							pos.merge(boardArray[i][j+1]);
+					if(right != null){
+						if(right.color == Player.NEUTRAL)
+							pos.merge(right);
+						else
+							pos.liberties.add(new Coord(i+1, j));
 					}
+					if(down != null){
+						if(down.color == Player.NEUTRAL)
+							pos.merge(down);
+						else
+							pos.liberties.add(new Coord(i, j-1));
+					}
+					if(left != null){
+						if(left.color == Player.NEUTRAL)
+							pos.merge(left);
+						else
+							pos.liberties.add(new Coord(i-1, j));
+					}
+				}
 			}
 		}
 		Set<Chain> toReturn = new HashSet<Chain>();
