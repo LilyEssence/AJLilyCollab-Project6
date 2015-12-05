@@ -8,12 +8,9 @@ public class GoTester {
 	
 	public static void main(String [] cheese){
 		System.out.println("Hello World! Welcome to the Go Tester!");
-		GoBoard goBoard = new GoBoard();
-		System.out.println(goBoard.getTextBoard());
 		//mergeTester();
 		//addPieceTester();
 		mergeNeutralsTester();
-		System.out.println(goBoard.getTextBoard());
 	}
 	
 	public static void mergeNeutralsTester(){
@@ -24,6 +21,8 @@ public class GoTester {
 		System.out.println(chains);
 
 		System.out.println(goBoard.getTextBoard());
+		float[] scores = goBoard.calculateTerritories();
+		System.out.println(scores[0]);
 		
 		goBoard.takeTurn(Player.BLACK, 0, 1);
 		goBoard.takeTurn(Player.BLACK, 1, 0);
@@ -34,6 +33,9 @@ public class GoTester {
 		
 		chains = goBoard.debugger();
 		System.out.println(chains);
+		
+		scores = goBoard.calculateTerritories();
+		System.out.println(scores[0]);
 	}
 	
 	public static void addPieceTester(){
